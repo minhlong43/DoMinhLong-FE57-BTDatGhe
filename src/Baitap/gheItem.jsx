@@ -2,7 +2,13 @@ import React, { Component } from "react";
 
 class GheItem extends Component {
   render() {
-    return <div></div>;
+    return (
+      <div>
+        <button className="btn btn-secondary ghe">
+          {this.props.data.SoGhe}
+        </button>
+      </div>
+    );
   }
 }
 
