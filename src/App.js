@@ -1,8 +1,12 @@
 import "./App.css";
-import Home from "./Baitap/home";
+import Home from "./Components/home";
 
 function App() {
-  return <Home />;
+  return (
+    <div className="App">
+      <Home />
+    </div>
+  );
 }
 
 export default App;

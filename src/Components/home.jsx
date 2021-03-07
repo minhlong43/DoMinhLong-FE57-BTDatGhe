@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import "./style.css";
 import DanhSachGhe from "./danhSachGhe";
+import DanhSachGheDangDat from "./danhSachGheDangDat";
 
 class Home extends Component {
-  data = [
+  products = [
     { SoGhe: 1, TenGhe: "số 1 ", Gia: 100, TrangThai: false },
     { SoGhe: 2, TenGhe: "số 2 ", Gia: 100, TrangThai: false },
     { SoGhe: 3, TenGhe: "số 3 ", Gia: 100, TrangThai: false },
@@ -11,7 +11,7 @@ class Home extends Component {
     { SoGhe: 5, TenGhe: "số 5 ", Gia: 100, TrangThai: false },
     { SoGhe: 6, TenGhe: "số 6 ", Gia: 100, TrangThai: false },
     { SoGhe: 7, TenGhe: "số 7 ", Gia: 100, TrangThai: false },
-    { SoGhe: 8, TenGhe: "số 7 ", Gia: 100, TrangThai: false },
+    { SoGhe: 8, TenGhe: "số 8 ", Gia: 100, TrangThai: false },
     { SoGhe: 9, TenGhe: "số 9 ", Gia: 100, TrangThai: false },
     { SoGhe: 10, TenGhe: "số 10 ", Gia: 100, TrangThai: false },
     { SoGhe: 11, TenGhe: "số 11 ", Gia: 100, TrangThai: false },
@@ -31,7 +31,7 @@ class Home extends Component {
     { SoGhe: 25, TenGhe: "số 25 ", Gia: 100, TrangThai: false },
     { SoGhe: 26, TenGhe: "số 26 ", Gia: 100, TrangThai: false },
     { SoGhe: 27, TenGhe: "số 27 ", Gia: 100, TrangThai: false },
-    { SoGhe: 28, TenGhe: "số 28 ", Gia: 100, TrangThai: false },
+    { SoGhe: 28, TenGhe: "số 28 ", Gia: 100, TrangThai: true },
     { SoGhe: 29, TenGhe: "số 29 ", Gia: 100, TrangThai: false },
     { SoGhe: 30, TenGhe: "số 30 ", Gia: 100, TrangThai: true },
     { SoGhe: 31, TenGhe: "số 31 ", Gia: 100, TrangThai: false },
@@ -41,31 +41,75 @@ class Home extends Component {
     { SoGhe: 35, TenGhe: "số 35 ", Gia: 100, TrangThai: false },
     { SoGhe: 36, TenGhe: "số 36 ", Gia: 100, TrangThai: false },
   ];
+
   state = {
-    danhSachGhe: null,
-    danhSachGheDangDat: [],
+    selectedProduct: null,
+    listProductOder: [],
+    toTalItem: 0,
   };
-  getProduct = (prodFromChildren) => {
+
+  getProducts = (prodFromProduct) => {
     this.setState({
-      danhSachGhe: prodFromChildren,
+      selectedProduct: prodFromProduct,
     });
+  };
+
+  addToProductListOder = (prodFromProduct) => {
+    const cloneListProductOder = [...this.state.listProductOder];
+    const index = cloneListProductOder.findIndex((item) => {
+      return item.products.SoGhe === prodFromProduct.SoGhe;
+    });
+
+    if (index === -1 && prodFromProduct.TrangThai === false) {
+      const listItem = {
+        products: prodFromProduct,
+        quantity: 1,
+      };
+
+      cloneListProductOder.push(listItem);
+
+      localStorage.setItem(
+        "listProductOder",
+        JSON.stringify(cloneListProductOder)
+      );
+
+      this.setState({
+        listProductOder: cloneListProductOder,
+        toTalItem: this.state.toTalItem + 1,
+      });
+    } else if (prodFromProduct.TrangThai === false) {
+      cloneListProductOder.splice(index, 1);
+      localStorage.setItem(
+        "listProductOder",
+        JSON.stringify(cloneListProductOder)
+      );
+
+      this.setState({
+        listProductOder: cloneListProductOder,
+        toTalItem: this.state.toTalItem - 1,
+      });
+    }
   };
 
   render() {
     return (
-      <div>
-        <div className="container">
-          <div className="row">
-            <h1 className="color">ĐẶT VÉ XE BUS HÃNG CYBERSOFT</h1>
-            <div className="col-6">
-              <button className="w-100 mb-2 btn btn-success">Tài Xế</button>
-              <div>
-                <DanhSachGhe data={this.data} />
-              </div>
-            </div>
-            <div className="col-6">
-              <p className="color">Danh sách ghế đã đặt</p>
-            </div>
+      <div className="container">
+        <h1 className="mt-3 text-warning">ĐẶT VÉ XE BUS HÃNG CYBERSOFT</h1>
+        <div className="row mt-5">
+          <div className="col border-right">
+            <h3 className="text-center btn btn-dark w-100">Tài xế</h3>
+            <DanhSachGhe
+              addToProductListOder={this.addToProductListOder}
+              getProduct={this.getProducts}
+              data={this.products}
+              listProductOder={this.state.listProductOder}
+            />
+          </div>
+          <div className="col">
+            <h3 className="text-warning">
+              Danh sách các ghế đã đặt [{this.state.toTalItem}]
+            </h3>
+            <DanhSachGheDangDat listProductOder={this.state.listProductOder} />
           </div>
         </div>
       </div>
